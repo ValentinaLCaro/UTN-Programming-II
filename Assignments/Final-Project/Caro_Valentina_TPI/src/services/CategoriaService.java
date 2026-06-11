@@ -1,0 +1,51 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package services;
+
+import entities.Categoria;
+import exception.CategoriaDuplicadaException;
+import exception.EntidadNoEncontradaException;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author vale
+ */
+public class CategoriaService {
+    private final ArrayList<Categoria> listaCategorias = new ArrayList<>(); // almacenamiento en memoria 
+
+    public void crearCategoria(Categoria nuevaCategoria) {
+        for (Categoria cat : listaCategorias) { // validar que no exista
+            if (!cat.isEliminado() && cat.getNombre().equalsIgnoreCase(nuevaCategoria.getNombre())) {
+                throw new CategoriaDuplicadaException(); // lanzar excepcion personalizada
+            }
+        }
+        listaCategorias.add(nuevaCategoria);
+    }
+
+    public ArrayList<Categoria> obtenerCategoriasActivas() {
+        ArrayList<Categoria> activas = new ArrayList<>();
+        for (Categoria cat : listaCategorias) {
+            if (!cat.isEliminado()) { 
+                activas.add(cat);
+            }
+        }
+        return activas;
+    }
+
+    public Categoria buscarPorId(Long id) {
+        for (Categoria cat : listaCategorias) {
+            if (cat.getId().equals(id) && !cat.isEliminado()) {
+                return cat;
+            }
+        }
+        throw new EntidadNoEncontradaException("La categoría con ID " + id + " no existe o fue dada de baja.");
+    }
+
+    public void eliminarCategoria(Long id) {
+        Categoria cat = buscarPorId(id); // si no existe, el metodo lanza la excepcion
+        cat.setEliminado(true); // soft delete 
+    }
+}
