@@ -1,0 +1,419 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+package Main;
+
+import entities.Categoria;
+import entities.DetallePedido;
+import entities.Pedido;
+import entities.Producto;
+import entities.Usuario;
+import enums.Estado;
+import enums.FormaPago;
+import enums.Rol;
+import exception.NegocioException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Scanner;
+import services.CategoriaService;
+import services.PedidoService;
+import services.ProductoService;
+import services.UsuarioService;
+import utilities.Validador;
+/**
+ *
+ * @author vale
+ */
+public class Menu {
+    private static final CategoriaService categoriaService = new CategoriaService();
+    private static final ProductoService productoService = new ProductoService();
+    private static final UsuarioService usuarioService = new UsuarioService();
+    private static final PedidoService pedidoService = new PedidoService();
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int opcion = -1;
+
+        while (opcion != 0) {
+            System.out.println("\n=== SISTEMA DE PEDIDOS (FOOD STORE) ==="); 
+            System.out.println("1. Categorias"); 
+            System.out.println("2. Productos"); 
+            System.out.println("3. Usuarios"); 
+            System.out.println("4. Pedidos");
+            System.out.println("0. Salir"); 
+            
+            try {
+                opcion = Validador.leerEntero(scanner, "Seleccione una opcion: "); 
+                Validador.validarOpcionMenu(opcion, 0, 4); 
+                switch (opcion) {
+                    case 1 -> menuCategorias(scanner); 
+                    case 2 -> menuProductos(scanner);
+                    case 3 -> menuUsuarios(scanner);
+                    case 4 -> menuPedidos(scanner);
+                    case 0 -> System.out.println("¡Gracias por utilizar Food Store!");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("\nError: " + e.getMessage());
+            }
+        }
+    }
+    
+    // ======================
+    // 1. SUBMENU CATEGORIAS
+    // ======================
+    private static void menuCategorias(Scanner scanner) {
+        while (true) {
+            System.out.println("\n--- GESTION DE CATEGORIAS ---");
+            System.out.println("1. Listar categorias");
+            System.out.println("2. Crear categoria");
+            System.out.println("3. Editar categoria");
+            System.out.println("4. Eliminar categoria");
+            System.out.println("0. Volver al Menu Principal");
+            
+            int opcion = Validador.leerEntero(scanner, "Seleccione una opcion: ");
+            if (opcion == 0) {
+                break;
+            }
+
+            try {
+                Validador.validarOpcionMenu(opcion, 1, 4);
+                switch (opcion) {
+                    case 1:
+                        ArrayList<Categoria> activas = categoriaService.obtenerCategoriasActivas();
+                        if (activas.isEmpty()) {
+                            System.out.println("No hay categorias cargadas.");
+                        } else {
+                            for (Categoria cat : activas) {
+                                System.out.println(cat);
+                            }
+                        }
+                        break;
+                        
+                    case 2:
+                        System.out.print("Ingrese nombre de la categoria: ");
+                        String nombre = scanner.nextLine();
+                        System.out.print("Ingrese descripcion: ");
+                        String desc = scanner.nextLine();
+                        
+                        Categoria nueva = new Categoria(nombre, desc, new ArrayList<>(), false, LocalDateTime.now());
+                        categoriaService.crearCategoria(nueva);
+                        System.out.println("Categoria creada con exito. ID asignado: " + nueva.getId());
+                        break;
+                        
+                    case 3:
+                        long id = Validador.leerEntero(scanner, "Ingrese ID de la categoria a editar: ");
+                        Categoria cat = categoriaService.buscarPorId(id);
+                        
+                        System.out.print("Nuevo nombre (Actual: " + cat.getNombre() + "): ");
+                        String nuevoNombre = scanner.nextLine();
+                        System.out.print("Nueva descripción (Actual: " + cat.getDescripcion() + "): ");
+                        String nuevaDesc = scanner.nextLine();
+                        
+                        cat.setNombre(nuevoNombre);
+                        cat.setDescripcion(nuevaDesc);
+                        System.out.println("Categoria actualizada con exito.");
+                        break;
+                        
+                    case 4:
+                        long idEliminar = Validador.leerEntero(scanner, "Ingrese ID de la categoria a eliminar: ");
+                        System.out.print("¿Esta seguro de eliminar esta categoria? (S/N): ");
+                        String conf = scanner.nextLine();
+                        if (conf.equalsIgnoreCase("S")) {
+                            categoriaService.eliminarCategoria(idEliminar);
+                            System.out.println("Categoria dada de baja logicamente.");
+                        } else {
+                            System.out.println("Operacion cancelada.");
+                        }
+                        break;
+                }
+            } catch (NegocioException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    // =====================
+    // 2. SUBMENU PRODUCTOS
+    // =====================
+    private static void menuProductos(Scanner scanner) {
+        while (true) {
+            System.out.println("\n--- GESTION DE PRODUCTOS ---");
+            System.out.println("1. Listar productos");
+            System.out.println("2. Crear producto");
+            System.out.println("3. Editar producto");
+            System.out.println("4. Eliminar producto");
+            System.out.println("0. Volver al Menu Principal");
+            
+            int opcion = Validador.leerEntero(scanner, "Seleccione una opcion: ");
+            if (opcion == 0) {
+                break;
+            }
+
+            try {
+                Validador.validarOpcionMenu(opcion, 1, 4);
+                switch (opcion) {
+                    case 1:
+                        ArrayList<Producto> activos = productoService.obtenerProductosActivos();
+                        if (activos.isEmpty()) {
+                            System.out.println("No hay productos en el catalogo.");
+                        } else {
+                            for (Producto prod : activos) {
+                                System.out.println(prod);
+                            }
+                        }
+                        break;
+                        
+                    case 2:
+                        System.out.print("Nombre del producto: ");
+                        String nombre = scanner.nextLine();
+                        System.out.print("Descripcion: ");
+                        String desc = scanner.nextLine();
+                        double precio = Validador.leerDouble(scanner, "Precio: ");
+                        int stock = Validador.leerEntero(scanner, "Stock inicial: ");
+                        System.out.print("Ruta de la imagen: ");
+                        String img = scanner.nextLine();
+                        
+                        long catId = Validador.leerEntero(scanner, "ID de la Categoria asociada: ");
+                        Categoria cat = categoriaService.buscarPorId(catId);
+                        
+                        Producto nuevo = new Producto(nombre, precio, desc, stock, img, cat, false, LocalDateTime.now());
+                        productoService.crearProducto(nuevo);
+                        cat.agregarProducto(nuevo);
+                        System.out.println("Producto creado con exito. ID: " + nuevo.getId());
+                        break;
+                        
+                    case 3:
+                        long id = Validador.leerEntero(scanner, "ID del producto a editar: ");
+                        System.out.print("Nuevo Nombre: "); 
+                        String nom = scanner.nextLine();
+                        double nuevoPrecio = Validador.leerDouble(scanner, "Nuevo Precio: ");
+                        int nuevoStock = Validador.leerEntero(scanner, "Nuevo Stock: ");
+                        System.out.print("Nueva Imagen: "); 
+                        String nuevaImg = scanner.nextLine();
+                        
+                        productoService.editarProducto(id, nom, nuevoPrecio, nuevoStock, nuevaImg);
+                        System.out.println("Producto modificado correctamente.");
+                        break;
+                        
+                    case 4:
+                        long idEliminar = Validador.leerEntero(scanner, "ID del producto a eliminar: ");
+                        System.out.print("¿Confirmar baja? (S/N): ");
+                        if (scanner.nextLine().equalsIgnoreCase("S")) {
+                            productoService.eliminarProducto(idEliminar);
+                            System.out.println("Producto retirado logicamente.");
+                        }
+                        break;
+                }
+            } catch (NegocioException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    // ====================
+    // 3. SUBMENU USUARIOS
+    // ====================
+    private static void menuUsuarios(Scanner scanner) {
+        while (true) {
+            System.out.println("\n--- GESTION DE USUARIOS ---");
+            System.out.println("1. Listar usuarios");
+            System.out.println("2. Crear usuario");
+            System.out.println("3. Editar usuario");
+            System.out.println("4. Eliminar usuario");
+            System.out.println("0. Volver al Menu Principal");
+            
+            int opcion = Validador.leerEntero(scanner, "Seleccione una opcion: ");
+            if (opcion == 0) {
+                break;
+            }
+
+            try {
+                Validador.validarOpcionMenu(opcion, 1, 4);
+                switch (opcion) {
+                    case 1:
+                        ArrayList<Usuario> activos = usuarioService.obtenerUsuariosActivos();
+                        if (activos.isEmpty()) {
+                            System.out.println("No hay usuarios registrados.");
+                        } else {
+                            for (Usuario user : activos) {
+                                System.out.println(user);
+                            }
+                        }
+                        break;
+                        
+                    case 2:
+                        System.out.print("Nombre: "); 
+                        String nom = scanner.nextLine();
+                        System.out.print("Apellido: "); 
+                        String ape = scanner.nextLine();
+                        System.out.print("Email: "); 
+                        String mail = scanner.nextLine();
+                        System.out.print("Celular: "); 
+                        String cel = scanner.nextLine();
+                        System.out.print("Contraseña: "); 
+                        String pass = scanner.nextLine();
+                        
+                        System.out.println("Seleccione Rol (1. ADMIN / 2. USUARIO): ");
+                        int rolSel = Validador.leerEntero(scanner, "-> ");
+                        Rol rol = Rol.USUARIO;
+                        if (rolSel == 1) {
+                            rol = Rol.ADMIN;
+                        }
+                        
+                        Usuario nuevo = new Usuario(nom, ape, mail, cel, pass, rol, new ArrayList<>(), false, LocalDateTime.now());
+                        usuarioService.crearUsuario(nuevo);
+                        System.out.println("Usuario guardado con éxito. ID: " + nuevo.getId());
+                        break;
+                        
+                    case 3:
+                        long id = Validador.leerEntero(scanner, "ID del usuario a editar: ");
+                        System.out.print("Nuevo Nombre: "); 
+                        String nuevoNom = scanner.nextLine();
+                        System.out.print("Nuevo Apellido: "); 
+                        String nuevoApe = scanner.nextLine();
+                        System.out.print("Nuevo Email: "); 
+                        String nuevoMail = scanner.nextLine();
+                        System.out.print("Nuevo Celular: "); 
+                        String nuevoCel = scanner.nextLine();
+                        
+                        usuarioService.editarUsuario(id, nuevoNom, nuevoApe, nuevoMail, nuevoCel);
+                        System.out.println("Datos del usuario actualizados.");
+                        break;
+                        
+                    case 4:
+                        long idEliminar = Validador.leerEntero(scanner, "ID del usuario a eliminar: ");
+                        System.out.print("¿Confirmar eliminación logica? (S/N): ");
+                        if (scanner.nextLine().equalsIgnoreCase("S")) {
+                            usuarioService.eliminarUsuario(idEliminar);
+                            System.out.println("Usuario inhabilitado para futuros pedidos.");
+                        }
+                        break;
+                }
+            } catch (NegocioException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    // ==============================
+    // 4. SUBMENU PEDIDOS Y DETALLES
+    // ==============================
+    private static void menuPedidos(Scanner scanner) {
+        while (true) {
+            System.out.println("\n--- GESTION DE PEDIDOS ---");
+            System.out.println("1. Listar pedidos");
+            System.out.println("2. Registrar nuevo pedido (con detalles)");
+            System.out.println("3. Actualizar estado y forma de pago");
+            System.out.println("4. Cancelar pedido (Baja logica)");
+            System.out.println("0. Volver al Menu Principal");
+            
+            int opcion = Validador.leerEntero(scanner, "Seleccione una opcion: ");
+            if (opcion == 0) {
+                break;
+            }
+
+            try {
+                Validador.validarOpcionMenu(opcion, 1, 4);
+                switch (opcion) {
+                    case 1:
+                        ArrayList<Pedido> activos = pedidoService.obtenerPedidosActivos();
+                        if (activos.isEmpty()) {
+                            System.out.println("No se registran pedidos activos.");
+                        } else {
+                            for (Pedido p : activos) {
+                                System.out.println(p);
+                                for (DetallePedido d : p.getDetalles()) {
+                                    System.out.println("   " + d);
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case 2:
+                        long userId = Validador.leerEntero(scanner, "ID del Usuario que realiza la compra: ");
+                        Usuario user = usuarioService.buscarPorId(userId);
+                        
+                        System.out.println("Seleccione Forma de Pago (1. TARJETA / 2. TRANSFERENCIA / 3. EFECTIVO): ");
+                        int formaPagoSelect = Validador.leerEntero(scanner, "-> ");
+                        FormaPago fp = FormaPago.EFECTIVO;
+                        if (formaPagoSelect == 1) {
+                            fp = FormaPago.TARJETA;
+                        } else if (formaPagoSelect == 2) {
+                            fp = FormaPago.TRANSFERENCIA;
+                        }
+
+                        Pedido nuevoPedido = new Pedido(java.time.LocalDate.now(), Estado.PENDIENTE, fp, user, false, LocalDateTime.now());
+                        
+                        // carga manual de detalles
+                        while (true) {
+                            System.out.println("\n--- Agregando item al Pedido ---");
+                            long productId = Validador.leerEntero(scanner, "ID del Producto: ");
+                            Producto product = productoService.buscarPorId(productId);
+                            int cant = Validador.leerEntero(scanner, "Cantidad: ");
+                            
+                            nuevoPedido.addDetallePedido(cant, product);
+                            
+                            System.out.print("¿Desea agregar otro producto? (S/N): ");
+                            String continuar = scanner.nextLine();
+                            if (!continuar.equalsIgnoreCase("S")) {
+                                break;
+                            }
+                        }
+                        
+                        pedidoService.registrarPedido(nuevoPedido);
+                        user.agregarPedido(nuevoPedido);
+                        System.out.println("Pedido registrado con exito. ID: " + nuevoPedido.getId() + " | Total: $" + nuevoPedido.getTotal());
+                        break;
+                        
+                    case 3:
+                        long id = Validador.leerEntero(scanner, "ID del Pedido a modificar: ");
+                        
+                        System.out.println("Nuevo Estado (1. PENDIENTE / 2. CONFIRMADO / 3. TERMINADO / 4. CANCELADO): ");
+                        int estadoSelect = Validador.leerEntero(scanner, "-> ");
+                        Estado est = Estado.CANCELADO;
+                        if (estadoSelect == 1) {
+                            est = Estado.PENDIENTE;
+                        } else if (estadoSelect == 2) {
+                            est = Estado.CONFIRMADO;
+                        } else if (estadoSelect == 3) {
+                            est = Estado.TERMINADO;
+                        }
+                        
+                        System.out.println("Nueva Forma de Pago (1. TARJETA / 2. TRANSFERENCIA / 3. EFECTIVO): ");
+                        int formaPagoModSelect = Validador.leerEntero(scanner, "-> ");
+                        FormaPago formaPagoMod = FormaPago.EFECTIVO;
+                        if (formaPagoModSelect == 1) {
+                            formaPagoMod = FormaPago.TARJETA;
+                        } else if (formaPagoModSelect == 2) {
+                            formaPagoMod = FormaPago.TRANSFERENCIA;
+                        }
+                        
+                        pedidoService.actualizarEstadoYPago(id, est, formaPagoMod);
+                        System.out.println("Pedido actualizado.");
+                        break;
+                        
+                    case 4:
+                        long idCancelar = Validador.leerEntero(scanner, "ID del Pedido a cancelar: ");
+                        System.out.print("¿Seguro que desea anular el pedido? (S/N): ");
+                        if (scanner.nextLine().equalsIgnoreCase("S")) {
+                            pedidoService.eliminarPedido(idCancelar);
+                            System.out.println("Pedido cancelado lógicamente.");
+                        }
+                        break;
+                }
+            } catch (NegocioException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+}

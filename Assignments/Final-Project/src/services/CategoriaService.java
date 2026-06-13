@@ -5,9 +5,12 @@
 package services;
 
 import entities.Categoria;
+import entities.Producto;
 import exception.CategoriaDuplicadaException;
 import exception.EntidadNoEncontradaException;
+import exception.NegocioException;
 import java.util.ArrayList;
+import utilities.Validador;
 
 /**
  *
@@ -36,16 +39,18 @@ public class CategoriaService {
     }
 
     public Categoria buscarPorId(Long id) {
-        for (Categoria cat : listaCategorias) {
-            if (cat.getId().equals(id) && !cat.isEliminado()) {
-                return cat;
-            }
-        }
-        throw new EntidadNoEncontradaException("La categoría con ID " + id + " no existe o fue dada de baja.");
+        return Validador.buscarPorId(listaCategorias, id, "caetgoria");
     }
 
     public void eliminarCategoria(Long id) {
-        Categoria cat = buscarPorId(id); // si no existe, el metodo lanza la excepcion
+        Categoria cat = buscarPorId(id); 
+
+        // validar si tiene productos activos 
+        for (Producto p : cat.getProductos()) {
+            if (!p.isEliminado()) {
+                throw new NegocioException("Error: No se puede eliminar la categoría '" + cat.getNombre() + "' porque tiene productos activos asociados.");
+            }
+        }
         cat.setEliminado(true); // soft delete 
     }
 }

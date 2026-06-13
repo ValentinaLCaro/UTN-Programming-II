@@ -26,6 +26,7 @@ public class Categoria extends Base {
 
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }
+    public ArrayList<Producto> getProductos() { return this.productos; }
 
     public void setNombre(String nombre) { 
         Validador.requerirTexto(nombre, "nombre");

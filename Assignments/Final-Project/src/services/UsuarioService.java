@@ -8,6 +8,7 @@ import entities.Usuario;
 import exception.EmailDuplicadoException;
 import exception.EntidadNoEncontradaException;
 import java.util.ArrayList;
+import utilities.Validador;
 
 /**
  *
@@ -36,12 +37,7 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorId(Long id) {
-        for (Usuario u : listaUsuarios) {
-            if (u.getId().equals(id) && !u.isEliminado()) {
-                return u;
-            }
-        }
-        throw new EntidadNoEncontradaException("Error: El usuario con ID " + id + " no existe o fue dado de baja.");
+        return Validador.buscarPorId(listaUsuarios, id, "usuario");
     }
 
     public void editarUsuario(Long id, String nuevoNombre, String nuevoApellido, String nuevoMail, String nuevoCelular) {
