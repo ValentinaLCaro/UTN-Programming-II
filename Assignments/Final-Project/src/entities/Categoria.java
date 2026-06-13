@@ -21,6 +21,7 @@ public class Categoria extends Base {
         super(eliminado, createdAt);
         setNombre(nombre);
         setDescripcion(descripcion);
+        this.productos = new ArrayList<>();
     }
 
     public String getNombre() { return nombre; }
