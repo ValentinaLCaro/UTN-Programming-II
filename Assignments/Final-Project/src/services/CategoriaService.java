@@ -39,7 +39,7 @@ public class CategoriaService {
     }
 
     public Categoria buscarPorId(Long id) {
-        return Validador.buscarPorId(listaCategorias, id, "caetgoria");
+        return Validador.buscarPorId(listaCategorias, id, "categoria");
     }
 
     public void eliminarCategoria(Long id) {
