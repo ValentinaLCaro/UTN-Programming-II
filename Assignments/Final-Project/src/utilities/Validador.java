@@ -91,7 +91,4 @@ public class Validador {
         throw new EntidadNoEncontradaException("Error: El " + nombreEntidad + " con ID " + id + " no existe o fue dado de baja.");
     }
 
-    public static void requerirMayorCero(int cantidad, String cantidad0) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

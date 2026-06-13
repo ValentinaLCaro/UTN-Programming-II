@@ -17,11 +17,10 @@ public class Categoria extends Base {
     private String descripcion;
     private ArrayList<Producto> productos;
 
-    public Categoria(String nombre, String descripcion, ArrayList<Producto> productos, boolean eliminado, LocalDateTime createdAt) {
+    public Categoria(String nombre, String descripcion, boolean eliminado, LocalDateTime createdAt) {
         super(eliminado, createdAt);
         setNombre(nombre);
         setDescripcion(descripcion);
-        this.productos = new ArrayList<Producto>();
     }
 
     public String getNombre() { return nombre; }

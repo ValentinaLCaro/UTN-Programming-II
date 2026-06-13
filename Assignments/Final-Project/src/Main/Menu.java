@@ -22,6 +22,7 @@ import services.PedidoService;
 import services.ProductoService;
 import services.UsuarioService;
 import utilities.Validador;
+
 /**
  *
  * @author vale
@@ -97,7 +98,7 @@ public class Menu {
                         System.out.print("Ingrese descripcion: ");
                         String desc = scanner.nextLine();
                         
-                        Categoria nueva = new Categoria(nombre, desc, new ArrayList<>(), false, LocalDateTime.now());
+                        Categoria nueva = new Categoria(nombre, desc, false, LocalDateTime.now());
                         categoriaService.crearCategoria(nueva);
                         System.out.println("Categoria creada con exito. ID asignado: " + nueva.getId());
                         break;
@@ -106,13 +107,18 @@ public class Menu {
                         long id = Validador.leerEntero(scanner, "Ingrese ID de la categoria a editar: ");
                         Categoria cat = categoriaService.buscarPorId(id);
                         
-                        System.out.print("Nuevo nombre (Actual: " + cat.getNombre() + "): ");
+                        System.out.print("Nuevo nombre (Actual: " + cat.getNombre() + " - Presione Enter para mantener): ");
                         String nuevoNombre = scanner.nextLine();
-                        System.out.print("Nueva descripción (Actual: " + cat.getDescripcion() + "): ");
+                        System.out.print("Nueva descripción (Actual: " + cat.getDescripcion() + " - Presione Enter para mantener): ");
                         String nuevaDesc = scanner.nextLine();
                         
-                        cat.setNombre(nuevoNombre);
-                        cat.setDescripcion(nuevaDesc);
+                        // Solo actualiza si el usuario ingresó texto real
+                        if (!nuevoNombre.trim().isEmpty()) {
+                            cat.setNombre(nuevoNombre);
+                        }
+                        if (!nuevaDesc.trim().isEmpty()) {
+                            cat.setDescripcion(nuevaDesc);
+                        }
                         System.out.println("Categoria actualizada con exito.");
                         break;
                         
@@ -188,14 +194,59 @@ public class Menu {
                         
                     case 3:
                         long id = Validador.leerEntero(scanner, "ID del producto a editar: ");
-                        System.out.print("Nuevo Nombre: "); 
+                        Producto p = productoService.buscarPorId(id);
+
+                        System.out.print("Nuevo Nombre (Actual: " + p.getNombre() + " - Presione Enter para mantener): "); 
                         String nom = scanner.nextLine();
-                        double nuevoPrecio = Validador.leerDouble(scanner, "Nuevo Precio: ");
-                        int nuevoStock = Validador.leerEntero(scanner, "Nuevo Stock: ");
-                        System.out.print("Nueva Imagen: "); 
+                        String nomFinal = nom.trim().isEmpty() ? p.getNombre() : nom;
+
+                        // Lectura opcional de Precio
+                        double precioFinal = p.getPrecio();
+                        while (true) {
+                            System.out.print("Nuevo Precio (Actual: $" + p.getPrecio() + " - Presione Enter para mantener): ");
+                            String precioInput = scanner.nextLine();
+                            if (precioInput.trim().isEmpty()) {
+                                break; // mantiene el actual
+                            }
+                            try {
+                                double pr = Double.parseDouble(precioInput);
+                                if (pr < 0) {
+                                    System.out.println("Error: El precio no puede ser negativo.");
+                                    continue;
+                               }
+                                precioFinal = pr;
+                                break;
+                            } catch (NumberFormatException e) {
+                                System.out.println("Error: Ingrese un numero decimal valido.");
+                            }
+                        }
+
+                        // Lectura opcional de Stock
+                        int stockFinal = p.getStock();
+                        while (true) {
+                            System.out.print("Nuevo Stock (Actual: " + p.getStock() + " - Presione Enter para mantener): ");
+                            String stockInput = scanner.nextLine();
+                            if (stockInput.trim().isEmpty()) {
+                                break; // mantiene el actual
+                            }
+                            try {
+                                int st = Integer.parseInt(stockInput);
+                                if (st < 0) {
+                                    System.out.println("Error: El stock no puede ser negativo.");
+                                    continue;
+                                }
+                                stockFinal = st;
+                                break;
+                            } catch (NumberFormatException e) {
+                                System.out.println("Error: Ingrese un numero entero valido.");
+                            }
+                        }
+
+                        System.out.print("Nueva Imagen (Actual: " + p.getImagen() + " - Presione Enter para mantener): "); 
                         String nuevaImg = scanner.nextLine();
+                        String imgFinal = nuevaImg.trim().isEmpty() ? p.getImagen() : nuevaImg;
                         
-                        productoService.editarProducto(id, nom, nuevoPrecio, nuevoStock, nuevaImg);
+                        productoService.editarProducto(id, nomFinal, precioFinal, stockFinal, imgFinal);
                         System.out.println("Producto modificado correctamente.");
                         break;
                         
@@ -273,16 +324,24 @@ public class Menu {
                         
                     case 3:
                         long id = Validador.leerEntero(scanner, "ID del usuario a editar: ");
-                        System.out.print("Nuevo Nombre: "); 
+                        Usuario u = usuarioService.buscarPorId(id);
+
+                        System.out.print("Nuevo Nombre (Actual: " + u.getNombre() + " - Presione Enter para mantener): "); 
                         String nuevoNom = scanner.nextLine();
-                        System.out.print("Nuevo Apellido: "); 
+                        System.out.print("Nuevo Apellido (Actual: " + u.getApellido() + " - Presione Enter para mantener): "); 
                         String nuevoApe = scanner.nextLine();
-                        System.out.print("Nuevo Email: "); 
+                        System.out.print("Nuevo Email (Actual: " + u.getMail() + " - Presione Enter para mantener): "); 
                         String nuevoMail = scanner.nextLine();
-                        System.out.print("Nuevo Celular: "); 
+                        System.out.print("Nuevo Celular (Actual: " + u.getCelular() + " - Presione Enter para mantener): "); 
                         String nuevoCel = scanner.nextLine();
                         
-                        usuarioService.editarUsuario(id, nuevoNom, nuevoApe, nuevoMail, nuevoCel);
+                        // Si viene vacío, se autocompeta con el valor previo
+                        String nomFinal = nuevoNom.trim().isEmpty() ? u.getNombre() : nuevoNom;
+                        String apeFinal = nuevoApe.trim().isEmpty() ? u.getApellido() : nuevoApe;
+                        String mailFinal = nuevoMail.trim().isEmpty() ? u.getMail() : nuevoMail;
+                        String celFinal = nuevoCel.trim().isEmpty() ? u.getCelular() : nuevoCel;
+
+                        usuarioService.editarUsuario(id, nomFinal, apeFinal, mailFinal, celFinal);
                         System.out.println("Datos del usuario actualizados.");
                         break;
                         

@@ -36,7 +36,7 @@ public class DetallePedido extends Base {
         this.producto = producto; 
     }
     public void setCantidad(int cantidad) {
-        Validador.requerirMayorCero(cantidad, "cantidad");
+        Validador.requerirMayorACero(cantidad, "cantidad");
         this.cantidad = cantidad;
         calcularSubtotal(); // se recalcula automáticamente al cambiar la cantidad
     }
