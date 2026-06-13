@@ -51,11 +51,11 @@ public class PedidoService {
 
     public ArrayList<Pedido> obtenerPedidosActivos() {
         ArrayList<Pedido> activos = new ArrayList<>();
-        for (Pedido p : listaPedidos) {
-            if (!p.isEliminado()) {
-                activos.add(p);
+            for (Pedido p : listaPedidos) {
+                if (!p.isEliminado()) {
+                    activos.add(p);
+                }
             }
-        }
         return activos;
     }
 
