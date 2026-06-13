@@ -28,7 +28,6 @@ public class Producto extends Base{
         setStock(stock);
         setImagen(imagen);
         setCategoria(categoria);
-        setDisponible(disponible);
     }
     
     public Producto(String nombre, double precio, int stock, Categoria categoria, boolean eliminado, LocalDateTime createdAt){
@@ -59,7 +58,7 @@ public class Producto extends Base{
         this.descripcion = descripcion; 
     }
     public void setStock(int stock) {
-        Validador.requerirNoNegativo(stock, "sstock");
+        Validador.requerirNoNegativo(stock, "stock");
         this.stock = stock; 
         this.disponible = (stock > 0); // actualiza el estado para mantener la coherencia
     }
@@ -67,9 +66,6 @@ public class Producto extends Base{
         Validador.requerirTexto(imagen, "imagen");
         this.imagen = imagen; 
     } 
-    public void setDisponible(boolean disponible) {
-        this.disponible = disponible; 
-    }
     public void setCategoria(Categoria categoria){
         Validador.requerirObjeto(categoria, "categoria");
         this.categoria = categoria;
