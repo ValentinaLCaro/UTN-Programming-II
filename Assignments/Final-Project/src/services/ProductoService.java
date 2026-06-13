@@ -8,6 +8,7 @@ import entities.Producto;
 import exception.CategoriaEliminadaException;
 import exception.EntidadNoEncontradaException;
 import java.util.ArrayList;
+import utilities.Validador;
 
 /**
  *
@@ -34,12 +35,7 @@ public class ProductoService {
     }
 
     public Producto buscarPorId(Long id) {
-        for (Producto p : listaProductos) {
-            if (p.getId().equals(id) && !p.isEliminado()) {
-                return p;
-            }
-        }
-        throw new EntidadNoEncontradaException("Error: El producto con ID " + id + " no existe.");
+        return Validador.buscarPorId(listaProductos, id, "producto");
     }
 
     public void editarProducto(Long id, String nuevoNombre, Double nuevoPrecio, int nuevoStock, String nuevaImagen) {

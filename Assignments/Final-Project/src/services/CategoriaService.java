@@ -8,6 +8,7 @@ import entities.Categoria;
 import exception.CategoriaDuplicadaException;
 import exception.EntidadNoEncontradaException;
 import java.util.ArrayList;
+import utilities.Validador;
 
 /**
  *
@@ -36,12 +37,7 @@ public class CategoriaService {
     }
 
     public Categoria buscarPorId(Long id) {
-        for (Categoria cat : listaCategorias) {
-            if (cat.getId().equals(id) && !cat.isEliminado()) {
-                return cat;
-            }
-        }
-        throw new EntidadNoEncontradaException("La categoría con ID " + id + " no existe o fue dada de baja.");
+        return Validador.buscarPorId(listaCategorias, id, "caetgoria");
     }
 
     public void eliminarCategoria(Long id) {

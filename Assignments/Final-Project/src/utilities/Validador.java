@@ -4,6 +4,9 @@
  */
 package utilities;
 
+import entities.Base;
+import exception.EntidadNoEncontradaException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -76,6 +79,16 @@ public class Validador {
         if (opcion < min || opcion > max) {
             throw new IllegalArgumentException("Opcion invalida. Debe seleccionar un numero entre " + min + " y " + max + ".");
         }
+    }
+    
+        // busca cualquier entidad por su ID
+    public static <T extends Base> T buscarPorId(ArrayList<T> lista, Long id, String nombreEntidad) {
+        for (T elemento : lista) {
+            if (elemento.getId().equals(id) && !elemento.isEliminado()) {
+                return elemento;
+            }
+        }
+        throw new EntidadNoEncontradaException("Error: El " + nombreEntidad + " con ID " + id + " no existe o fue dado de baja.");
     }
 
     public static void requerirMayorCero(int cantidad, String cantidad0) {
