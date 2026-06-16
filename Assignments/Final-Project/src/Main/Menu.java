@@ -163,11 +163,25 @@ public class Menu {
                 Validador.validarOpcionMenu(opcion, 1, 4);
                 switch (opcion) {
                     case 1:
-                        ArrayList<Producto> activos = productoService.obtenerProductosActivos();
-                        if (activos.isEmpty()) {
-                            System.out.println("No hay productos en el catalogo.");
+                        System.out.println("\n--- OPCIONES DE LISTADO ---");
+                        System.out.println("1. Listado general");
+                        System.out.println("2. Filtrar por categoria");
+                        int tipoListado = Validador.leerEntero(scanner, "Seleccione una opcion: ");
+
+                        ArrayList<Producto> productosAMostrar;
+                        if (tipoListado == 2) {
+                            long catId = Validador.leerEntero(scanner, "Ingrese ID de la categoria: ");
+                            // validar que la categorí+ia exista+e
+                            categoriaService.buscarPorId(catId); 
+                            productosAMostrar = productoService.obtenerProductosPorCategoria(catId);
                         } else {
-                            for (Producto prod : activos) {
+                            productosAMostrar = productoService.obtenerProductosActivos();
+                        }
+
+                        if (productosAMostrar.isEmpty()) {
+                            System.out.println("No se encontraron productos para mostrar.");
+                        } else {
+                            for (Producto prod : productosAMostrar) {
                                 System.out.println(prod);
                             }
                         }
@@ -383,11 +397,25 @@ public class Menu {
                 Validador.validarOpcionMenu(opcion, 1, 4);
                 switch (opcion) {
                     case 1:
-                        ArrayList<Pedido> activos = pedidoService.obtenerPedidosActivos();
-                        if (activos.isEmpty()) {
-                            System.out.println("No se registran pedidos activos.");
+                        System.out.println("\n--- OPCIONES DE LISTADO ---");
+                        System.out.println("1. Listar todos los pedidos");
+                        System.out.println("2. Filtrar pedidos por usuario");
+                        int tipoListadoPedido = Validador.leerEntero(scanner, "Seleccione una opcion: ");
+
+                        ArrayList<Pedido> pedidosAMostrar;
+                        if (tipoListadoPedido == 2) {
+                            long usrId = Validador.leerEntero(scanner, "Ingrese ID del usuario: ");
+                            // validar si el usuario existe
+                            usuarioService.buscarPorId(usrId); 
+                            pedidosAMostrar = pedidoService.obtenerPedidosPorUsuario(usrId);
                         } else {
-                            for (Pedido p : activos) {
+                            pedidosAMostrar = pedidoService.obtenerPedidosActivos();
+                        }
+
+                        if (pedidosAMostrar.isEmpty()) {
+                            System.out.println("No se registran pedidos para mostrar.");
+                        } else {
+                            for (Pedido p : pedidosAMostrar) {
                                 System.out.println(p);
                                 for (DetallePedido d : p.getDetalles()) {
                                     System.out.println("   " + d);
