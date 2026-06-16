@@ -46,6 +46,16 @@ public class ProductoService {
         p.setStock(nuevoStock); // el setter actualiza la disponibilidad automaticamente
         p.setImagen(nuevaImagen);
     }
+    
+    public ArrayList<Producto> obtenerProductosPorCategoria(Long categoriaId) {
+        ArrayList<Producto> filtrados = new ArrayList<>();
+        for (Producto p : listaProductos) {
+            if (!p.isEliminado() && p.getCategoria().getId().equals(categoriaId)) {
+                filtrados.add(p);
+            }
+        }
+        return filtrados;
+    }
 
     public void eliminarProducto(Long id) {
         Producto p = buscarPorId(id);

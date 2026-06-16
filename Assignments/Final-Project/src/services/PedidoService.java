@@ -62,6 +62,16 @@ public class PedidoService {
     public Pedido buscarPorId(Long id) {
         return Validador.buscarPorId(listaPedidos, id, "pedido");
     }
+    
+    public ArrayList<Pedido> obtenerPedidosPorUsuario(Long usuarioId) {
+        ArrayList<Pedido> filtrados = new ArrayList<>();
+        for (Pedido p : listaPedidos) {
+            if (!p.isEliminado() && p.getUsuario().getId().equals(usuarioId)) {
+                filtrados.add(p);
+            }
+        }
+        return filtrados;
+    }
 
     public void actualizarEstadoYPago(Long id, enums.Estado nuevoEstado, enums.FormaPago nuevaFormaPago) {
         Pedido p = buscarPorId(id);
