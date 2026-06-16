@@ -269,7 +269,7 @@ public class Menu {
                         System.out.print("¿Confirmar baja? (S/N): ");
                         if (scanner.nextLine().equalsIgnoreCase("S")) {
                             productoService.eliminarProducto(idEliminar);
-                            System.out.println("Producto retirado logicamente.");
+                            System.out.println("Producto retirado.");
                         }
                         break;
                 }
@@ -405,7 +405,7 @@ public class Menu {
                         ArrayList<Pedido> pedidosAMostrar;
                         if (tipoListadoPedido == 2) {
                             long usrId = Validador.leerEntero(scanner, "Ingrese ID del usuario: ");
-                            // validar si el usuario existe
+                            // validar si el usuario existe2
                             usuarioService.buscarPorId(usrId); 
                             pedidosAMostrar = pedidoService.obtenerPedidosPorUsuario(usrId);
                         } else {
