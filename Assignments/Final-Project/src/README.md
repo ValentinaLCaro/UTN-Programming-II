@@ -21,7 +21,7 @@ El sistema implementa operaciones CRUD completas ejecutadas directamente desde m
 
 ### Video demostrativo (Permisos Públicos)
 
-🔗 https://youtu.be/tu-enlace-al-video-aqui
+🔗 https://youtu.be/tcv7spVKlQU
 
 > El video recorre el flujo CRUD completo, las reglas de negocio y explica el diseño de la arquitectura del software.
 
