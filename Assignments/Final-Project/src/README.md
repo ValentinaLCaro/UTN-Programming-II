@@ -27,7 +27,7 @@ El sistema implementa operaciones CRUD completas ejecutadas directamente desde m
 
 ### Documentación académica (Informe PDF)
 
-🔗 https://github.com/tu-usuario/tu-repositorio/blob/main/Informe_TPI_Caro.pdf
+🔗 https://GitHub\UTN-Programming-II\Assignments\Final-Project\Caro-Valentina-Informe-TPI.pdf
 
 > El archivo PDF detallado también se encuentra adjunto de forma directa en el directorio raíz de este repositorio.
 
